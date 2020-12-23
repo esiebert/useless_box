@@ -1,6 +1,6 @@
 # Useless Box
 
-This is a useless box, which I decided to develop only to improve my skills.
+This is an useless application that has an useless logic, which I decided to develop only to improve my skills.
 
 #### Workflow
 The box follows this useless workflow:
