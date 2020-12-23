@@ -6,7 +6,7 @@ import logging
 import random
 import string
 from time import sleep
-from common.rabbitmq import setup as setup_rabbitmq
+from common.message_broker import RabbitMQ
 import os
 
 LOGGER = logging.getLogger('producer')
@@ -17,15 +17,16 @@ INTERVAL_SEC = 5
 
 class Producer():
     def __init__(self):
-        self._channel = setup_rabbitmq(
+        self._message_broker = RabbitMQ(
             service='producer'
         )
 
     def start(self):
-        """Main loop which queues random alphanumerical codes of length 20."""
+        """Main loop which queues random 20 digits alphanumerical strings."""
+        LOGGER.error(f"Starting production!")
         while True:
             code = _generate_string()
-            self._channel.basic_publish(exchange='', routing_key=os.environ.get("RABBITMQ_QUEUE", "codes"), body=code)
+            self._message_broker.publish(body=code)
             LOGGER.error(f"Sent {code}")
             sleep(INTERVAL_SEC)
 

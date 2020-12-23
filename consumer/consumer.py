@@ -6,7 +6,7 @@ summed up value is then saved in a log file.
 import logging
 from time import sleep
 from datetime import datetime
-from common.rabbitmq import setup as setup_rabbitmq
+from common.message_broker import RabbitMQ
 import random
 
 LOGGER = logging.getLogger('consumer')
@@ -16,14 +16,14 @@ LOG_FILEPATH = "./log.txt"
 
 class Consumer():
     def __init__(self):
-        self._channel = setup_rabbitmq(
+        self._message_broker = RabbitMQ(
             callback_function=self.callback,
-            service='producer'
+            service='consumer'
         )
 
     def start(self):
-        LOGGER.error("Consuming RabbitMQ queue.")
-        self._channel.start_consuming()
+        LOGGER.error("Starting consumption!")
+        self._message_broker.start_consuming()
 
     def log_value(self, timestamp, body, result):
         """Saves measurements and saves to a log file."""
