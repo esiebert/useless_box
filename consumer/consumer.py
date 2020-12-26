@@ -1,13 +1,8 @@
-"""
-The PV Simulator component consumes values queued by a meter in RabbitMQ
-and sums up with estimated photovoltaic values at a give timestamp. The
-summed up value is then saved in a log file.
-"""
 import logging
-from time import sleep
 from datetime import datetime
-from common.message_broker import RabbitMQ
-import random
+from common.message_broker import MessageBroker, RabbitMQ
+from processor import Processor, SumNumbers
+from output_stream import OutputStream, FileOutputStream
 
 LOGGER = logging.getLogger('consumer')
 
@@ -15,39 +10,33 @@ LOGGER = logging.getLogger('consumer')
 LOG_FILEPATH = "./log.txt"
 
 class Consumer():
-    def __init__(self):
-        self._message_broker = RabbitMQ(
-            callback_function=self.callback,
-            service='consumer'
-        )
+    def __init__(self, message_broker: MessageBroker, processor: Processor, output_stream: OutputStream):
+        self._processor = processor
+        self._output_stream = output_stream
+        self._message_broker = message_broker
+        message_broker.setup_callback(self._callback)
 
     def start(self):
         LOGGER.error("Starting consumption!")
         self._message_broker.start_consuming()
 
-    def log_value(self, timestamp, body, result):
-        """Saves measurements and saves to a log file."""
-        with open(LOG_FILEPATH, 'a') as f:
-            f.write(f"{timestamp},{body},{result}\n")
-
-    def process_value(self, body):
-        """Procedure holding core functionality.
-
-        Receives a string and sums all the numbers in it.
-        """
-        timestamp = datetime.utcnow()
-
-        # Sum all the numbers in the string
-        result = sum([int(val) for val in body if val.isnumeric()])
+    def _callback(self, ch, method, properties, body):
+        """Callback function to handle and process RabbitMQ messages."""
+        result = self._processor.process(body)
+        LOGGER.error(f"Result is {result} for processed value {body}")
 
         # Log time, string, and result of sum
-        LOGGER.error(f"Result is {result} for processed value {body}")
-        self.log_value(timestamp, body, result)
-
-    def callback(self, ch, method, properties, body):
-        """Callback function to handle and process RabbitMQ messages."""
-        self.process_value(str(body))
+        timestamp = datetime.utcnow()
+        self._output_stream.write(timestamp, body, result)
 
 if __name__ == '__main__':
-    consumer = Consumer()
+    consumer = Consumer(
+        message_broker=RabbitMQ(
+            service='consumer'
+        ),
+        processor=SumNumbers(),
+        output_stream=FileOutputStream(
+            filepath=LOG_FILEPATH
+        ),
+    )
     consumer.start()

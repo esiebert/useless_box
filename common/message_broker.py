@@ -13,7 +13,11 @@ class MessageBroker(ABC):
         pass
 
     @abstractmethod
-    def setup(self):
+    def _setup(self):
+        pass
+
+    @abstractmethod
+    def setup_callback(self):
         pass
 
     @abstractmethod
@@ -26,16 +30,16 @@ class MessageBroker(ABC):
 
 
 class RabbitMQ(MessageBroker):
-    def __init__(self, callback_function=None, service='rabbitmq'):
+    def __init__(self, service='rabbitmq'):
         self._host = os.environ.get("RABBITMQ_HOST", "localhost")
         self._port = os.environ.get("RABBITMQ_PORT", 5672)
         self._user = os.environ.get("RABBITMQ_USER", "guest")
         self._pwd = os.environ.get("RABBITMQ_PWD", "guest")
         self._queue = os.environ.get("RABBITMQ_QUEUE", "codes")
         self._logger = logging.getLogger(service)
-        self._channel = self.setup(callback_function, service)
+        self._channel = self._setup(service)
 
-    def setup(self, callback_function=None, service='rabbitmq'):
+    def _setup(self, service='rabbitmq'):
         """Sets up a channel to RabbitMQ Message Broker"""
         tries = 5
         while True:
@@ -52,12 +56,6 @@ class RabbitMQ(MessageBroker):
                 )
                 channel = connection.channel()
                 channel.queue_declare(queue=self._queue)
-                if callback_function:
-                    channel.basic_consume(
-                        queue=self._queue, 
-                        on_message_callback=callback_function, 
-                        auto_ack=False
-                    )
                 return channel
             except pika.exceptions.ProbableAuthenticationError as e:
                 self._logger.error("Error while authenticating on RabbitMQ")
@@ -75,6 +73,13 @@ class RabbitMQ(MessageBroker):
                     raise e
                 self._logger.error("Waiting for RabbitMQ to start...")
                 sleep(2)
+
+    def setup_callback(self, callback_function):
+        self._channel.basic_consume(
+            queue=self._queue,
+            on_message_callback=callback_function,
+            auto_ack=False
+        )
 
     def publish(self, body):
         self._channel.basic_publish(
