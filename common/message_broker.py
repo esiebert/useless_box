@@ -1,35 +1,33 @@
-import pika
+"""Module holding implementation of message brokers."""
 import logging
 from time import sleep
 import os
-
 from abc import ABC, abstractmethod
+
+import pika
 
 
 class MessageBroker(ABC):
-    """Abstract Message Broker class"""
-    @abstractmethod
-    def __init__(self):
-        pass
-
+    """Abstract implementation of a message broker."""
     @abstractmethod
     def _setup(self):
-        pass
+        """Abstract function which sets up the message broker."""
 
     @abstractmethod
-    def setup_callback(self):
-        pass
+    def setup_callback(self, callback_function):
+        """Abstract function which sets up the callback."""
 
     @abstractmethod
-    def publish(self):
-        pass
+    def publish(self, body):
+        """Abstract function which publish a body to the message broker."""
 
     @abstractmethod
     def start_consuming(self):
-        pass
+        """Abstract function which starts the consumption of messages queued."""
 
 
 class RabbitMQ(MessageBroker):
+    """Implementation of a message broker using RabbitMQ"""
     def __init__(self, service='rabbitmq'):
         self._host = os.environ.get("RABBITMQ_HOST", "localhost")
         self._port = os.environ.get("RABBITMQ_PORT", 5672)
@@ -37,9 +35,9 @@ class RabbitMQ(MessageBroker):
         self._pwd = os.environ.get("RABBITMQ_PWD", "guest")
         self._queue = os.environ.get("RABBITMQ_QUEUE", "codes")
         self._logger = logging.getLogger(service)
-        self._channel = self._setup(service)
+        self._channel = self._setup()
 
-    def _setup(self, service='rabbitmq'):
+    def _setup(self):
         """Sets up a channel to RabbitMQ Message Broker"""
         tries = 5
         while True:
@@ -69,7 +67,7 @@ class RabbitMQ(MessageBroker):
             except Exception as e:
                 tries -= 1
                 if tries == 0:
-                    self._logger.error(f"Unexpected error on RabbitMQ: {e}")
+                    self._logger.error("Unexpected error on RabbitMQ: %s", e)
                     raise e
                 self._logger.error("Waiting for RabbitMQ to start...")
                 sleep(2)
