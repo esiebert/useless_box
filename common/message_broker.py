@@ -37,6 +37,7 @@ class RabbitMQ(MessageBroker):
         self._logger = logging.getLogger(service)
         self._channel = self._setup()
 
+    # pylint: disable=invalid-name
     def _setup(self):
         """Sets up a channel to RabbitMQ Message Broker"""
         tries = 5
@@ -64,7 +65,7 @@ class RabbitMQ(MessageBroker):
             except pika.exceptions.ConnectionClosedByBroker as e:
                 self._logger.error("Connection was closed unexpectedly")
                 raise e
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-except
                 tries -= 1
                 if tries == 0:
                     self._logger.error("Unexpected error on RabbitMQ: %s", e)

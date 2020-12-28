@@ -7,3 +7,7 @@ run: build
 
 down:
 	docker-compose down
+
+test:
+	mypy --ignore-missing-imports .
+	pylint */*.py

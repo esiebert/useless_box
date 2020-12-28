@@ -1,4 +1,5 @@
 """Module holding generator implementations used by the producer."""
+# pylint: disable=too-few-public-methods
 from abc import ABC, abstractmethod
 from random import choice
 from string import ascii_letters, digits

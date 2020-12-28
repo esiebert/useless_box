@@ -1,4 +1,5 @@
 """Module that implements the consumer."""
+# pylint: disable=too-few-public-methods
 import logging
 from datetime import datetime
 from output_stream import OutputStream, FileOutputStream
@@ -31,6 +32,7 @@ class Consumer():
         LOGGER.error("Starting consumption!")
         self._message_broker.start_consuming()
 
+    # pylint: disable=[unused-argument, invalid-name]
     def _callback(self, ch, method, properties, body):
         """Callback function to handle and process messages."""
         result = self._processor.process(body)

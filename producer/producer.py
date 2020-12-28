@@ -1,6 +1,8 @@
 """Module that implements the producer."""
+# pylint: disable=too-few-public-methods
 import logging
 from time import sleep
+# pylint: disable=no-name-in-module
 from generator import Generator, TwentyDigitsCode
 from common.message_broker import MessageBroker, RabbitMQ
 

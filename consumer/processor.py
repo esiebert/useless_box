@@ -1,4 +1,5 @@
 """Module holding implementation of processors."""
+# pylint: disable=too-few-public-methods
 from abc import ABC, abstractmethod
 
 
