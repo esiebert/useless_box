@@ -1,0 +1,22 @@
+version: 2.1
+
+jobs:
+  build:
+    machine:
+        image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - run:
+          name: Test and build docker images
+          command: |
+            make test
+            make build
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
