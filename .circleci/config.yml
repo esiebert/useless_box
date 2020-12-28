@@ -7,9 +7,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Test and build docker images
+          name: Build docker images
           command: |
-            make test
             make build
 
 workflows:
