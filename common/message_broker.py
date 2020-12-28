@@ -28,7 +28,7 @@ class MessageBroker(ABC):
 
 class RabbitMQ(MessageBroker):
     """Implementation of a message broker using RabbitMQ"""
-    def __init__(self, service='rabbitmq'):
+    def __init__(self, service: str='rabbitmq'):
         self._host = os.environ.get("RABBITMQ_HOST", "localhost")
         self._port = os.environ.get("RABBITMQ_PORT", 5672)
         self._user = os.environ.get("RABBITMQ_USER", "guest")
