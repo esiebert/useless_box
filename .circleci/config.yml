@@ -9,6 +9,8 @@ jobs:
       - run:
           name: Test and build docker images
           command: |
+            pyenv local 3.7.0
+            pip3 install mypy pylint pika
             make test
             make build
 
