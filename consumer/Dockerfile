@@ -8,3 +8,5 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+RUN mypy --ignore-missing-imports ./producer
+RUN pylint ./consumer/*.py
