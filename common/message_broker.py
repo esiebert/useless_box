@@ -4,6 +4,7 @@ from time import sleep
 import os
 from abc import ABC, abstractmethod
 
+from collections.abc import Callable
 import pika
 
 
@@ -14,11 +15,11 @@ class MessageBroker(ABC):
         """Abstract function which sets up the message broker."""
 
     @abstractmethod
-    def setup_callback(self, callback_function):
+    def setup_callback(self, callback_function: Callable):
         """Abstract function which sets up the callback."""
 
     @abstractmethod
-    def publish(self, body):
+    def publish(self, body: bytes):
         """Abstract function which publish a body to the message broker."""
 
     @abstractmethod
@@ -28,7 +29,7 @@ class MessageBroker(ABC):
 
 class RabbitMQ(MessageBroker):
     """Implementation of a message broker using RabbitMQ"""
-    def __init__(self, service='rabbitmq'):
+    def __init__(self, service: str='rabbitmq'):
         self._host = os.environ.get("RABBITMQ_HOST", "localhost")
         self._port = os.environ.get("RABBITMQ_PORT", 5672)
         self._user = os.environ.get("RABBITMQ_USER", "guest")
@@ -73,14 +74,14 @@ class RabbitMQ(MessageBroker):
                 self._logger.error("Waiting for RabbitMQ to start...")
                 sleep(2)
 
-    def setup_callback(self, callback_function):
+    def setup_callback(self, callback_function: Callable):
         self._channel.basic_consume(
             queue=self._queue,
             on_message_callback=callback_function,
             auto_ack=False
         )
 
-    def publish(self, body):
+    def publish(self, body: bytes):
         self._channel.basic_publish(
             exchange='',
             routing_key=self._queue,

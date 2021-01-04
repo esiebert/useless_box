@@ -33,13 +33,13 @@ class Consumer():
         self._message_broker.start_consuming()
 
     # pylint: disable=[unused-argument, invalid-name]
-    def _callback(self, ch, method, properties, body):
+    def _callback(self, ch, method, properties, body: bytes):
         """Callback function to handle and process messages."""
         result = self._processor.process(body)
         LOGGER.error("Result is %s for processed value %s", str(result), str(body))
 
         # Log time, string, and result of sum
-        timestamp = datetime.utcnow()
+        timestamp = str(datetime.utcnow())
         self._output_stream.write(timestamp, body, result)
 
 if __name__ == '__main__':
