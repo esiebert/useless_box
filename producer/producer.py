@@ -2,8 +2,9 @@
 # pylint: disable=too-few-public-methods
 import logging
 from time import sleep
+from typing import Generator
 # pylint: disable=no-name-in-module
-from generator import Generator, TwentyDigitsCode
+from generator import twenty_digits_code
 from common.message_broker import MessageBroker, RabbitMQ
 
 LOGGER = logging.getLogger('producer')
@@ -24,8 +25,7 @@ class Producer():
     def start(self):
         """Main loop which queues random 20 digits alphanumerical strings."""
         LOGGER.error("Starting production!")
-        while True:
-            body = self._generator.generate()
+        for body in self._generator:
             self._message_broker.publish(body=body)
             LOGGER.error("Sent %s", body)
             sleep(INTERVAL_SEC)
@@ -35,6 +35,6 @@ if __name__ == '__main__':
         message_broker=RabbitMQ(
             service='producer'
         ),
-        generator=TwentyDigitsCode(),
+        generator=twenty_digits_code(),
     )
     producer.start()
