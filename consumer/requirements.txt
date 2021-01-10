@@ -1,5 +1,2 @@
 scipy==1.5.4
-pika==1.1.0
 redis==3.5.3
-mypy==0.790
-pylint==2.6.0
