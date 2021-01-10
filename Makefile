@@ -8,6 +8,13 @@ run: build
 down:
 	docker-compose down
 
-test:
-	mypy --ignore-missing-imports .
-	pylint */*.py
+static-test:
+	mypy --ignore-missing-imports ./**/*.py
+	mypy --ignore-missing-imports ./**/**/*.py
+	pylint ./**/*.py
+	pylint ./**/**/*.py
+
+unit-test:
+	pytest
+
+test: static-test unit-test
