@@ -17,4 +17,4 @@ class FileOutputStream(OutputStream):
     def write(self, timestamp: str, body: bytes, result: str):
         """Saves measurements in a file."""
         with open(self._filepath, 'a') as file:
-            file.write(f"{timestamp},{body},{result}\n")
+            file.write(f"{timestamp},{str(body)},{result}\n")

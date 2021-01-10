@@ -7,7 +7,8 @@ WORKDIR /usr/src/app/
 
 RUN pip install -r requirements.txt -r common/requirements.txt
 
-COPY . .
+COPY ./producer/ ./producer/
+COPY ./common/ ./common/
 
 RUN mypy --ignore-missing-imports ./producer
 RUN pylint ./producer/*.py

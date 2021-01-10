@@ -7,7 +7,8 @@ WORKDIR /usr/src/app/
 
 RUN pip install -r requirements.txt -r common/requirements.txt
 
-COPY . .
+COPY ./consumer/ ./consumer/
+COPY ./common/ ./common/
 
-RUN mypy --ignore-missing-imports ./producer
+RUN mypy --ignore-missing-imports ./consumer
 RUN pylint ./consumer/*.py
