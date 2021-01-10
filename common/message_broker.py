@@ -15,21 +15,21 @@ class MessageBroker(ABC):
         """Abstract function which sets up the message broker."""
 
     @abstractmethod
-    def setup_callback(self, callback_function: Callable):
+    def setup_callback(self, callback_function: Callable) -> None:
         """Abstract function which sets up the callback."""
 
     @abstractmethod
-    def publish(self, body: bytes):
+    def publish(self, body: bytes) -> None:
         """Abstract function which publish a body to the message broker."""
 
     @abstractmethod
-    def start_consuming(self):
+    def start_consuming(self) -> None:
         """Abstract function which starts the consumption of messages queued."""
 
 
 class RabbitMQ(MessageBroker):
     """Implementation of a message broker using RabbitMQ"""
-    def __init__(self, service: str='rabbitmq'):
+    def __init__(self, service: str='rabbitmq') -> None:
         self._host = os.environ.get("RABBITMQ_HOST", "localhost")
         self._port = os.environ.get("RABBITMQ_PORT", 5672)
         self._user = os.environ.get("RABBITMQ_USER", "guest")
@@ -39,7 +39,7 @@ class RabbitMQ(MessageBroker):
         self._channel = self._setup()
 
     # pylint: disable=invalid-name
-    def _setup(self):
+    def _setup(self) -> pika.channel.Channel:
         """Sets up a channel to RabbitMQ Message Broker"""
         tries = 5
         while True:
@@ -74,19 +74,19 @@ class RabbitMQ(MessageBroker):
                 self._logger.error("Waiting for RabbitMQ to start...")
                 sleep(2)
 
-    def setup_callback(self, callback_function: Callable):
+    def setup_callback(self, callback_function: Callable) -> None:
         self._channel.basic_consume(
             queue=self._queue,
             on_message_callback=callback_function,
             auto_ack=False
         )
 
-    def publish(self, body: bytes):
+    def publish(self, body: bytes) -> None:
         self._channel.basic_publish(
             exchange='',
             routing_key=self._queue,
             body=body
         )
 
-    def start_consuming(self):
+    def start_consuming(self) -> None:
         self._channel.start_consuming()

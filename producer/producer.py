@@ -18,11 +18,11 @@ class Producer():
     Implementation of a producer which generates elements
     and publishes to a message broker.
     """
-    def __init__(self, message_broker: MessageBroker, generator: Generator):
+    def __init__(self, message_broker: MessageBroker, generator: Generator) -> None:
         self._message_broker = message_broker
         self._generator = generator
 
-    def start(self):
+    def start(self) -> None:
         """Main loop which queues random 20 digits alphanumerical strings."""
         LOGGER.error("Starting production!")
         for body in self._generator:
