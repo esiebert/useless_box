@@ -2,8 +2,9 @@
 # pylint: disable=too-few-public-methods
 import logging
 from datetime import datetime
+from typing import Callable
 from output_stream import OutputStream, FileOutputStream
-from processor import Processor, SumNumbers
+from processor import sum_numbers
 from common.message_broker import MessageBroker, RabbitMQ
 
 LOGGER = logging.getLogger('consumer')
@@ -19,7 +20,7 @@ class Consumer():
     """
     def __init__(self,
             message_broker: MessageBroker,
-            processor: Processor,
+            processor: Callable,
             output_stream: OutputStream
         ) -> None:
         self._processor = processor
@@ -35,7 +36,7 @@ class Consumer():
     # pylint: disable=[unused-argument, invalid-name]
     def _callback(self, ch, method, properties, body: bytes) -> None:
         """Callback function to handle and process messages."""
-        result = self._processor.process(body)
+        result = self._processor(body)
         LOGGER.error("Result is %s for processed value %s", str(result), str(body))
 
         # Log time, string, and result of sum
@@ -47,7 +48,7 @@ if __name__ == '__main__':
         message_broker=RabbitMQ(
             service='consumer'
         ),
-        processor=SumNumbers(),
+        processor=sum_numbers,
         output_stream=FileOutputStream(
             filepath=LOG_FILEPATH
         ),
