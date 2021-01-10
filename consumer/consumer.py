@@ -3,9 +3,10 @@
 import logging
 from datetime import datetime
 from typing import Callable
-from output_stream import OutputStream, FileOutputStream
-from processor import sum_numbers
+
 from common.message_broker import MessageBroker, RabbitMQ
+from .output_stream import OutputStream, FileOutputStream
+from .processor import sum_numbers
 
 LOGGER = logging.getLogger('consumer')
 
