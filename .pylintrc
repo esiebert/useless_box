@@ -1,0 +1,16 @@
+[TYPECHECK]
+ignored-classes=pytest
+
+[MASTER]
+ignore=tests,util,examples,doc,setup.py
+
+[MISCELLANEOUS]
+notes=FIXME,XXX,TODO
+
+[MESSAGES CONTROL]
+disable=missing-docstring,
+        invalid-name,
+        wrong-import-order,
+        protected-access,
+        too-few-public-methods,
+        fixme
