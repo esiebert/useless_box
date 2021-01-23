@@ -15,5 +15,5 @@ COPY .pylintrc ./
 
 RUN /venv/bin/pip install --no-cache ./consumer ./common
 
-RUN mypy --ignore-missing-imports ./consumer
-RUN pylint ./consumer/*.py
+RUN /venv/bin/mypy --ignore-missing-imports ./consumer
+RUN /venv/bin/pylint ./consumer/consumer/*.py

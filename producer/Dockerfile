@@ -11,8 +11,9 @@ RUN /venv/bin/pip install -r requirements.txt -r common/requirements.txt
 
 COPY producer producer
 COPY common common
+COPY .pylintrc ./
 
 RUN /venv/bin/pip install --no-cache ./producer ./common
 
-RUN mypy --ignore-missing-imports ./producer
-RUN pylint ./producer/*.py
+RUN /venv/bin/mypy --ignore-missing-imports ./producer
+RUN /venv/bin/pylint ./producer/producer/*.py
