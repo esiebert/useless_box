@@ -2,7 +2,7 @@
 # pylint: disable=[protected-access]
 import pytest
 from freezegun import freeze_time
-from consumer.consumer import Consumer
+from consumer.main import Consumer
 
 
 @pytest.fixture

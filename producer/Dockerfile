@@ -17,3 +17,4 @@ RUN /venv/bin/pip install --no-cache ./producer ./common
 
 RUN /venv/bin/mypy --ignore-missing-imports ./producer
 RUN /venv/bin/pylint ./producer/producer/*.py
+RUN /venv/bin/pytest

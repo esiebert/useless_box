@@ -17,3 +17,4 @@ RUN /venv/bin/pip install --no-cache ./consumer ./common
 
 RUN /venv/bin/mypy --ignore-missing-imports ./consumer
 RUN /venv/bin/pylint ./consumer/consumer/*.py
+RUN /venv/bin/pytest

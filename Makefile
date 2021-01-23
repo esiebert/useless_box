@@ -9,7 +9,6 @@ down:
 	docker-compose down
 
 static-test:
-	mypy --ignore-missing-imports ./**/*.py
 	mypy --ignore-missing-imports ./**/**/*.py
 	pylint ./**/*.py
 	pylint ./**/**/*.py
