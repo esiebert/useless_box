@@ -3,7 +3,7 @@ build:
 	docker-compose build
 
 run: build
-	docker-compose up --scale consumer=3
+	docker-compose up --scale consumer=3 --scale producer=2
 
 down:
 	docker-compose down
