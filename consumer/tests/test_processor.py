@@ -16,7 +16,9 @@ from consumer.processor import sum_numbers
     "Numeric",
     "Empty",
 ])
-def test_sum_numbers(code, expected):
+def test_sum_numbers(code, expected, mocker):
+    # Disable processing time for this test
+    mocker.patch('consumer.processor.randint', return_value=0)
     result = sum_numbers(code)
     assert result == expected, \
         "Incorrect summation result!"
