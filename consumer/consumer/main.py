@@ -38,6 +38,7 @@ class Consumer():
     def _callback(self, ch, method, properties, body: bytes) -> None:
         """Callback function to handle and process messages."""
         result = self._processor(body)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
         LOGGER.error("Result is %s for processed value %s", str(result), str(body))
 
         # Log time, string, and result of sum
