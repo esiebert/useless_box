@@ -34,7 +34,7 @@ def test_consumer_start(consumer, mock_message_broker):
     mock_message_broker.start_consuming.assert_called_once()
 
 @freeze_time('1212-12-12T12:12:12')
-def test_consumer_callback(consumer, mock_processor, mock_output_stream, mocker):
+def test_consumer_callback(consumer, mock_processor, mock_output_stream):
     # Mock channel and method so that basic_ack doesn't raise an exception
     mock_channel = MagicMock()
     mock_channel.basic_ack = Mock(return_value=None)

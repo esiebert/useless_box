@@ -1,6 +1,5 @@
 """Module holding implementation of message brokers."""
 import logging
-from time import sleep
 import os
 from abc import ABC, abstractmethod
 
@@ -41,7 +40,6 @@ class RabbitMQ(MessageBroker):
     # pylint: disable=invalid-name
     def _setup(self) -> pika.channel.Channel:
         """Sets up a channel to RabbitMQ Message Broker"""
-        tries = 5
         while True:
             try:
                 connection = pika.BlockingConnection(
@@ -67,12 +65,8 @@ class RabbitMQ(MessageBroker):
                 self._logger.error("Connection was closed unexpectedly")
                 raise e
             except Exception as e: # pylint: disable=broad-except
-                tries -= 1
-                if tries == 0:
-                    self._logger.error("Unexpected error on RabbitMQ: %s", e)
-                    raise e
-                self._logger.error("Waiting for RabbitMQ to start...")
-                sleep(2)
+                self._logger.error("Unexpected error on RabbitMQ: %s", e)
+                raise e
 
     def setup_callback(self, callback_function: Callable) -> None:
         self._channel.basic_consume(

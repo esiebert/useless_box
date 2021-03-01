@@ -1,4 +1,4 @@
-version: "3"
+version: "2.1"
 services: 
   producer:
     build:
@@ -6,7 +6,8 @@ services:
       dockerfile: ./producer/Dockerfile
     command: "/venv/bin/python ./producer/producer/main.py"
     depends_on:
-      - message-broker
+      message-broker:
+        condition: service_healthy
     network_mode: host
     env_file: ./default.env
 
@@ -16,7 +17,8 @@ services:
       dockerfile: ./consumer/Dockerfile
     command: "/venv/bin/python ./consumer/consumer/main.py"
     depends_on:
-      - message-broker
+      message-broker:
+        condition: service_healthy
     network_mode: host
     env_file: ./default.env
 
@@ -26,3 +28,8 @@ services:
     ports: 
       - 5672:5672
       - 15672:15672
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
