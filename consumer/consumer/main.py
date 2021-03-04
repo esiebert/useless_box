@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Callable
 
 from common.message_broker import MessageBroker, RabbitMQ
-from consumer.output_stream import OutputStream, FileOutputStream
+from consumer.output_stream import OutputStream, RedisOutputStream
 from consumer.processor import sum_numbers
 
 LOGGER = logging.getLogger('consumer')
@@ -51,8 +51,10 @@ if __name__ == '__main__':
             service='consumer'
         ),
         processor=sum_numbers,
-        output_stream=FileOutputStream(
-            filepath=LOG_FILEPATH
+        output_stream=RedisOutputStream(
+            host='localhost',
+            port=6379,
+            db=0,
         ),
     )
     consumer.start()

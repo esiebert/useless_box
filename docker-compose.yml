@@ -33,3 +33,9 @@ services:
       interval: 5s
       retries: 5
       test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+
+  redis:
+    container_name: redis
+    image: redis:6.2.1
+    ports:
+      - 6379:6379
