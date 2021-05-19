@@ -14,6 +14,7 @@ static-test:
 	mypy --ignore-missing-imports ./common/**/*.py
 	mypy --ignore-missing-imports ./consumer/**/*.py
 	mypy --ignore-missing-imports ./producer/**/*.py
+	mypy --ignore-missing-imports ./logger/**/*.py
 	pylint ./**/*.py
 	pylint ./**/**/*.py
 
@@ -24,5 +25,6 @@ unit-test:
 	# gets to fail, but calling from inside the folder has no issues.
 	pytest ./consumer
 	pytest ./producer
+	pytest ./logger
 
 test: static-test unit-test

@@ -33,7 +33,8 @@ class Producer():
 if __name__ == '__main__':
     producer = Producer(
         message_broker=RabbitMQ(
-            service='producer'
+            service='producer',
+            publish_queue='codes'
         ),
         generator=twenty_digits_code(),
     )

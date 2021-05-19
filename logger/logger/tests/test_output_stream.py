@@ -1,6 +1,6 @@
 # pylint: disable=[missing-module-docstring,missing-function-docstring,invalid-name]
 from unittest.mock import patch, mock_open
-from consumer.output_stream import FileOutputStream
+from logger.output_stream import FileOutputStream
 
 
 def test_file_output_stream():

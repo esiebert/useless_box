@@ -22,6 +22,18 @@ services:
     network_mode: host
     env_file: ./default.env
 
+  logger:
+    privileged: true
+    build:
+      context: .
+      dockerfile: ./logger/Dockerfile
+    command: "/venv/bin/python ./logger/logger/main.py"
+    depends_on:
+      message-broker:
+        condition: service_healthy
+    network_mode: host
+    env_file: ./default.env
+
   message-broker:
     container_name: message-broker
     image: rabbitmq:3-management-alpine

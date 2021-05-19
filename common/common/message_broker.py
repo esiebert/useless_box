@@ -28,12 +28,13 @@ class MessageBroker(ABC):
 
 class RabbitMQ(MessageBroker):
     """Implementation of a message broker using RabbitMQ"""
-    def __init__(self, service: str='rabbitmq') -> None:
+    def __init__(self, service: str='rabbitmq', publish_queue: str=None, consume_queue: str=None) -> None:
         self._host = os.environ.get("RABBITMQ_HOST", "localhost")
         self._port = os.environ.get("RABBITMQ_PORT", 5672)
         self._user = os.environ.get("RABBITMQ_USER", "guest")
         self._pwd = os.environ.get("RABBITMQ_PWD", "guest")
-        self._queue = os.environ.get("RABBITMQ_QUEUE", "codes")
+        self._publish_queue = publish_queue
+        self._consume_queue = consume_queue
         self._logger = logging.getLogger(service)
         self._channel = self._setup()
 
@@ -53,7 +54,10 @@ class RabbitMQ(MessageBroker):
                     )
                 )
                 channel = connection.channel()
-                channel.queue_declare(queue=self._queue)
+                if self._publish_queue:
+                    channel.queue_declare(queue=self._publish_queue)
+                if self._consume_queue:
+                    channel.queue_declare(queue=self._consume_queue)
                 return channel
             except pika.exceptions.ProbableAuthenticationError as e:
                 self._logger.error("Error while authenticating on RabbitMQ")
@@ -70,7 +74,7 @@ class RabbitMQ(MessageBroker):
 
     def setup_callback(self, callback_function: Callable) -> None:
         self._channel.basic_consume(
-            queue=self._queue,
+            queue=self._consume_queue,
             on_message_callback=callback_function,
             auto_ack=False
         )
@@ -78,7 +82,7 @@ class RabbitMQ(MessageBroker):
     def publish(self, body: bytes) -> None:
         self._channel.basic_publish(
             exchange='',
-            routing_key=self._queue,
+            routing_key=self._publish_queue,
             body=body
         )
 
